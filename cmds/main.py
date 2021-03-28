@@ -8,10 +8,10 @@ class Main(Cog_Extension):
     async def ping(self,ctx):
         await ctx.send(F'{round(self.bot.latency * 1000)}(ms)')
 
-    '''@commands.command()
+    @commands.command()
     async def sayd(self,ctx,*,msg):
         await ctx.message.delete()
-        await ctx.send(msg)'''
+        await ctx.send(msg)
 
 def setup(bot):
     bot.add_cog(Main(bot))
