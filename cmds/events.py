@@ -20,6 +20,9 @@ class Event(Cog_Extension):
         await channel.send(F'{member} join!')
         print(F'{member} leave!')
 
+    '''@commands.Cog.listener()
+    async def on_command_error(self,ctx,error):'''
+
 
 def setup(bot):
     bot.add_cog(Event(bot))
