@@ -58,6 +58,7 @@ class Gamble(Cog_Extension):
             bbmt_data = json.load(bbmts)
         bbmts.close()
 
+        # 如果json檔內還沒有資料，新增一個
         if bbmt_data.__contains__(str(ctx.author)) == False:
             the_revised_dict = get_json_data(json_path, str(ctx.author), int(100))
             write_json_data(the_revised_dict)
@@ -88,12 +89,15 @@ class Gamble(Cog_Extension):
             bbmt_data = json.load(bbmts)
         bbmts.close()
 
+        # 判斷有沒有初始化珍奶
         if bbmt_data.__contains__(str(ctx.author)) == False:
             await ctx.send(F'**{ctx.author}** 你還沒買珍奶，滾')
         else:
             number = int(number)
+            # 判斷珍奶夠不夠，如果不夠就不做gamble
             if int(number) > int(bbmt_data[str(ctx.author)]):
                 await ctx.send(F'**{ctx.author}** 你珍奶沒了，滾')
+            # 不能輸負的
             elif int(number) < 0:
                 new_bubtea = -999999
                 the_revised_dict = get_json_data(json_path, str(ctx.author), int(new_bubtea))
@@ -102,8 +106,11 @@ class Gamble(Cog_Extension):
             else:
                 if number == 0:
                     number = int(bbmt_data[str(ctx.author)])
-                rand = random.randint(1, 6)
-                bubtea = int(bbmt_data[str(ctx.author)])-number
+                rand = random.randint(1, 6) # 1~6
+
+                bubtea = int(bbmt_data[str(ctx.author)])-number # 扣掉押金
+
+                #抓骰子圖片
                 pic = discord.File(jdata['dice'][rand-1])
                 await ctx.send(file = pic)
 
@@ -113,30 +120,33 @@ class Gamble(Cog_Extension):
                 else:
                     dice_big_data.put(rand)
 
-                if bet == str(rand):
+                if bet == str(rand): # 數字
                     new_bubtea = int(bubtea + (number * 6))
                     await ctx.send(F'恭喜!! **{ctx.author}** ，你的珍奶變為 {new_bubtea}')
-                elif bet == '單' and rand%2 == 1:
+                elif bet == '單' and rand%2 == 1: # 單
                     new_bubtea = int(bubtea + (number * 2))
                     await ctx.send(F'恭喜!! **{ctx.author}** ，你的珍奶變為 {new_bubtea}')
-                elif bet == '雙' and rand%2 == 0:
+                elif bet == '雙' and rand%2 == 0: # 雙
                     new_bubtea = int(bubtea + (number * 2))
                     await ctx.send(F'恭喜!! **{ctx.author}** ，你的珍奶變為 {new_bubtea}')
-                elif bet == '小' and rand <= 3:
+                elif bet == '小' and rand <= 3: # 小
                     new_bubtea = int(bubtea + (number * 2))
                     await ctx.send(F'恭喜!! **{ctx.author}** ，你的珍奶變為 {new_bubtea}')
-                elif bet == '大' and rand >= 4:
+                elif bet == '大' and rand >= 4: # 大
                     new_bubtea = int(bubtea + (number * 2))
                     await ctx.send(F'恭喜!! **{ctx.author}** ，你的珍奶變為 {new_bubtea}')
-                else:
+                else: # 猜錯了
                     new_bubtea = int(bubtea)
                     await ctx.send(F'輸家 **{ctx.author}** ，滾 ，你的珍奶變為 {new_bubtea}')
+
+                # 前面的結果，保留20次
                 AStr = ""
                 for q in dice_big_data.queue:
                     AStr += str(q) + "  "
 
                 await ctx.send(AStr)
 
+                #save data to BBMT.json
                 the_revised_dict = get_json_data(json_path, str(ctx.author), int(new_bubtea))
                 write_json_data(the_revised_dict)
 
@@ -147,15 +157,18 @@ class Gamble(Cog_Extension):
             dict2 = bbmt_data
         bbmts.close()
 
+        # sort 由大到小
         dict2 = sorted(dict2.items(), key=lambda x:x[1], reverse = True)
-        lst_key = []
-        lst_value = []
+        lst_key = [] # name
+        lst_value = [] # count of bubble milk tea
         for key, value in dict2:
             lst_key.append(key)
             lst_value.append(value)
         #print(lst_key)
         str = ""
         await ctx.send(F'排行榜')
+
+        #先存成str 在輸出
         for i in range (len(lst_key)):
             #await ctx.send(F'第{i+1}名 : **{lst_key[i]}**， 有 **{lst_value[i]}** 杯')
             str += (F'第{i+1}名 : **{lst_key[i]}**， 有 **{lst_value[i]}** 杯\n')
