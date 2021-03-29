@@ -13,5 +13,18 @@ class Main(Cog_Extension):
         await ctx.message.delete()
         await ctx.send(msg)
 
+    '''@commands.command()
+    async def join(self,ctx):
+        channel = ctx.author.voice.channel
+        await channel.connect()
+
+    @commands.command()
+    async def leave(self,ctx):
+        await ctx.voice_client.disconnect()
+
+    @commands.command()
+    async def music(self,ctx,*,msg):
+        await ctx.send(F'!p {msg}')'''
+
 def setup(bot):
     bot.add_cog(Main(bot))
